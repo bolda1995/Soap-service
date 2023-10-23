@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions 
+    name="TaskManagementService"
+    targetNamespace="http://www.example.org/TaskManagementService/" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:tns="http://www.example.org/TaskManagementService/" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Type definitions -->
+    <types>
+        <xsd:schema targetNamespace="http://www.example.org/TaskManagementService/">
+            <!-- Simple type for Task Status -->
+            <xsd:simpleType name="statusType">
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="New"/>
+                    <xsd:enumeration value="In Progress"/>
+                    <xsd:enumeration value="Completed"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            
+            <!-- Complex type for Task -->
+            <xsd:complexType name="Task">
+                <xsd:sequence>
+                    <xsd:element name="TaskID" type="xsd:string"/>
+                    <xsd:element name="Title" type="xsd:string"/>
+                    <xsd:element name="Description" type="xsd:string"/>
+                    <xsd:element name="Status" type="tns:statusType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- Complex types for responses -->
+            <xsd:complexType name="taskResponse">
+                <xsd:sequence>
+                    <xsd:element name="Task" type="tns:Task"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="operationResponse">
+                <xsd:sequence>
+                    <xsd:element name="Result" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <!-- Additional types can be added as required -->
+        </xsd:schema>
+    </types>
+
+    <!-- Message definitions -->
+    <message name="CreateTaskRequest">
+        <part name="Title" type="xsd:string"/>
+        <part name="Description" type="xsd:string"/>
+    </message>
+    <message name="CreateTaskResponse">
+        <part name="Response" type="tns:operationResponse"/>
+    </message>
+
+    <message name="GetTaskRequest">
+        <part name="TaskID" type="xsd:string"/>
+    </message>
+    <message name="GetTaskResponse">
+        <part name="Response" type="tns:taskResponse"/>
+    </message>
+
+    <message name="UpdateTaskRequest">
+        <part name="Task" type="tns:Task"/>
+    </message>
+    <message name="UpdateTaskResponse">
+        <part name="Response" type="tns:operationResponse"/>
+    </message>
+
+    <message name="DeleteTaskRequest">
+        <part name="TaskID" type="xsd:string"/>
+    </message>
+    <message name="DeleteTaskResponse">
+        <part name="Response" type="tns:operationResponse"/>
+    </message>
+
+    <!-- PortType (Interface) definitions -->
+    <portType name="TaskManagementPortType">
+        <operation name="CreateTask">
+            <input message="tns:CreateTaskRequest"/>
+            <output message="tns:CreateTaskResponse"/>
+        </operation>
+        <operation name="GetTask">
+            <input message="tns:GetTaskRequest"/>
+            <output message="tns:GetTaskResponse"/>
+        </operation>
+        <operation name="UpdateTask">
+            <input message="tns:UpdateTaskRequest"/>
+            <output message="tns:UpdateTaskResponse"/>
+        </operation>
+        <operation name="DeleteTask">
+            <input message="tns:DeleteTaskRequest"/>
+            <output message="tns:DeleteTaskResponse"/>
+        </operation>
+    </portType>
+
+    <!-- Binding definitions -->
+    <binding name="TaskManagementBinding" type="tns:TaskManagementPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CreateTask">
+            <soap:operation soapAction="http://www.example.org/TaskManagementService/CreateTask"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <!-- Similar entries for GetTask, UpdateTask, DeleteTask -->
+    </binding>
+
+    <!-- Service definitions -->
+    <service name="TaskManagementService">
+        <documentation>Service to manage tasks</documentation>
+        <port name="TaskManagementPort" binding="tns:TaskManagementBinding">
+            <soap:address location="http://localhost:8080/TaskManagementService"/>
+        </port>
+    </service>
+
+</definitions>
